@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>HackPittsburgh Robot</title>
+    <link rel="stylesheet" type="text/css" href="css/drive.css">
+
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/drive.js"></script>
+  </head>
+
+  <body>
+    <table>
+      <tr>
+        <td width="650px">
+          <!--    <img src="http://10.20.30.148:8080/?action=stream"/>
+            -->
+          <img id="webcam" src="snapshot.jpg">
+        </td>
+
+        <td width="100px">
+          <div class="speed">
+            <button id="btn-start" class="btn-speed" data-speed="150">Start</button>
+            <br>
+            <button id="btn-stop" class="btn-speed" data-speed="0">Stop</button>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <div>
+      <button class="btn-steering" data-steering="-500">&lt;&lt;</button>
+      <button class="btn-steering" data-steering="-250">&lt;</button>
+      <button  class="btn-steering" data-steering="0">--</button>
+      <button  class="btn-steering" data-steering="250">&gt</button>
+      <button  class="btn-steering" data-steering="500">&gt;&gt;</button>
+    </div>
+
+  </body>
+</html>
