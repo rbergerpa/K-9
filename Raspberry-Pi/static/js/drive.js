@@ -11,9 +11,14 @@ function initDrive() {
     putJSON('/speed', { speed: $(this).data('speed') })
   });
 
-    console.log('webcam: ' + 'http://' + window.location.hostname + ':8080/?action=stream');
-    $('#webcam').attr('src', 'http://' + window.location.hostname + ':8080/?action=stream');
-		      
+  $('a.sound').on('mousedown', function() {
+    console.log("sound " + $(this).data('filename'));
+    putJSON('/sound', { filename: $(this).data('filename') })
+  });
+
+
+  console.log('webcam: ' + 'http://' + window.location.hostname + ':8080/?action=stream');
+  $('#webcam').attr('src', 'http://' + window.location.hostname + ':8080/?action=stream');
 
 }
 
@@ -30,4 +35,8 @@ console.log("data: " + JSON.stringify(data));
   });
 }
 
-$(initDrive);
+$(document).ready(function() {
+  initDrive();
+  $('.menu').dropit();
+});
+

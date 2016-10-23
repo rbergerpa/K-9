@@ -1,6 +1,7 @@
 from flask import Flask, request, json, jsonify
 from werkzeug.contrib.fixers import ProxyFix
 import serial
+import subprocess
 
 app = Flask(__name__, static_url_path='')
 
@@ -25,7 +26,16 @@ def speed():
     print "speed", speed
     sendArduion("speed=" + str(speed))
     return "Ok"
- 
+
+@app.route('/sound', methods=['PUT'])
+def sound():
+    json = request.get_json()
+    filename = json['filename']
+    print "sound", filename
+
+    subprocess.Popen(["omxplayer", "../../Sounds/" + filename]);
+    return "Ok"
+
 arduino = serial.Serial('/dev/ttyACM0', 115200)
 def sendArduion(command):
     arduino.write(command + '\n')
