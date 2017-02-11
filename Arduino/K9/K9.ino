@@ -4,6 +4,8 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 
+# include "AFmotor.h"  // Uncomment for Adafruit Motor Shield
+
 const int START_SONAR_PIN = 6;
 const int LEFT_SONAR_PIN = 2;
 const int CENTER_SONAR_PIN = 3;
@@ -13,15 +15,13 @@ const int MIN_SIDE_DISTANCE = 36;  // inches
 const int MIN_CENTER_DISTANCE = 14;
 const int SERVO_CENTER = 1450; // microseconds
 
+enum {Left, Right};
+
 #if (AVOID_OBSTACLES)
 Sonar leftSonar(LEFT_SONAR_PIN);
 Sonar centerSonar(CENTER_SONAR_PIN);
 Sonar rightSonar(RIGHT_SONAR_PIN);
 #endif
-
-Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
-Adafruit_DCMotor *rightMotor = AFMS.getMotor(1);
-Adafruit_DCMotor *leftMotor = AFMS.getMotor(2);
 
 void setup() {
     initSerial();
@@ -31,13 +31,9 @@ void setup() {
 #if AVOID_OBSTACLES    
     startSonar(START_SONAR_PIN);
 #endif
-    
-    AFMS.begin(); 
-    leftMotor->setSpeed(0);
-    leftMotor->run(FORWARD);
-    rightMotor->setSpeed(0);
-    rightMotor->run(FORWARD);
-    
+
+    initMotors();
+
     Serial.println("Ready");
 }
 
@@ -83,22 +79,8 @@ void loop() {
   
   pollSerial();
 
-  int leftSpeed = userSpeed + userSteering;
-  int rightSpeed  = userSpeed - userSteering;
-
-  
-  leftMotor->setSpeed(min(abs(leftSpeed), 255));
-  if (leftSpeed >0) {
-     leftMotor->run(FORWARD);
-  } else {
-    leftMotor->run(BACKWARD);
-  }
-  rightMotor->setSpeed(min(abs(rightSpeed), 255));
-  if (rightSpeed >0) {
-     rightMotor->run(FORWARD);
-  } else {
-    rightMotor->run(BACKWARD);
-  }
+  setMotorSpeed(Left, userSpeed + userSteering);
+  setMotorSpeed(Right, userSpeed - userSteering);
   
 #ifdef AVOID_OBSTACLES
   int left = leftSonar.inches();
