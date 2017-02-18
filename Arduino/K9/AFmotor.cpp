@@ -2,27 +2,27 @@
 #include <Adafruit_MotorShield.h>
 #include "AFMotor.h"
 
-static const int _numMotors=4;
+static const int numMotors=4;
 
-static Adafruit_MotorShield _AFMS = Adafruit_MotorShield();
-static Adafruit_DCMotor* _motors[_numMotors];
+static Adafruit_MotorShield AFMS = Adafruit_MotorShield();
+static Adafruit_DCMotor* motors[numMotors];
 
 void initMotors() {
-    _AFMS.begin();
+    AFMS.begin();
 
-    for (int i = 0; i < _numMotors; i++) {
-         _motors[i] = _AFMS.getMotor(i+1);
-         _motors[i]->setSpeed(0);
+    for (int i = 0; i < numMotors; i++) {
+         motors[i] = AFMS.getMotor(i+1);
+         motors[i]->setSpeed(0);
     }
 }
 
-void setMotorSpeed(int motor, int speed) {
-    Adafruit_DCMotor* _motor = _motors[motor];
+void setMotorSpeed(int  _motor, int speed) {
+    Adafruit_DCMotor* motor = motors[_motor];
 
-    _motor->setSpeed(min(abs(speed), 255));
+    motor->setSpeed(min(abs(speed), 255));
     if (speed >= 0) {
-      _motor->run(FORWARD);
+      motor->run(FORWARD);
     } else {
-      _motor->run(BACKWARD);
+      motor->run(BACKWARD);
     }
 }
