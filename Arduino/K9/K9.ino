@@ -1,10 +1,9 @@
-//#include <PciManager.h>
-//#include <Sonar.h>
 #include <Servo.h>
 #include <Wire.h>
-#include <Adafruit_MotorShield.h>
 
-# include "AFmotor.h"  // Uncomment for Adafruit Motor Shield
+// Uncomment for Adafruit Motor Shield
+#include <Adafruit_MotorShield.h>
+# include "AFmotor.h"  
 
 const int START_SONAR_PIN = 6;
 const int LEFT_SONAR_PIN = 2;
@@ -17,21 +16,10 @@ const int SERVO_CENTER = 1450; // microseconds
 
 enum {Left, Right};
 
-#if (AVOID_OBSTACLES)
-Sonar leftSonar(LEFT_SONAR_PIN);
-Sonar centerSonar(CENTER_SONAR_PIN);
-Sonar rightSonar(RIGHT_SONAR_PIN);
-#endif
-
 void setup() {
     initSerial();
     
     Serial.println("Initializing");
-
-#if AVOID_OBSTACLES    
-    startSonar(START_SONAR_PIN);
-#endif
-
     initMotors();
 
     Serial.println("Ready");
@@ -52,28 +40,6 @@ void printDistances(int left, int center, int right) {
 int userSteering = 0;
 int userSpeed = 0;
 
-/* void k_turn(int left, int center, int right) { */
-/*   Serial.println("Performing K turn"); */
-  
-/*   if (left > right) { */
-/*     servo.writeMicroseconds(SERVO_MAX); */
-/*   } else { */
-/*     servo.writeMicroseconds(SERVO_MIN); */
-/*   } */
-  
-/*   delay(250); */
-/*   motor->run(BACKWARD); */
-/*   delay(2000); */
-  
-/*   motor->setSpeed(0); */
-/*     servo.writeMicroseconds(SERVO_CENTER); */
-/*   delay(200); */
-  
-/*   motor->run(FORWARD); */
-/*   motor->setSpeed(userSpeed); */
-/* } */
-  
-
 void loop() {
   int servo_ms;
   
@@ -81,30 +47,6 @@ void loop() {
 
   setMotorSpeed(Left, userSpeed + userSteering);
   setMotorSpeed(Right, userSpeed - userSteering);
-  
-#ifdef AVOID_OBSTACLES
-  int left = leftSonar.inches();
-  int center = centerSonar.inches();
-  int right = rightSonar.inches();
-// printDistances(left, center, right);
-  
-
-  if (center < MIN_CENTER_DISTANCE) {
-    k_turn(left, center, right);
-    return;
-  }
-  
-  if (left < MIN_SIDE_DISTANCE || right < MIN_SIDE_DISTANCE) {
-    servo_ms = SERVO_CENTER - SERVO_GAIN * (left - right);
-    if (servo_ms < SERVO_MIN) {
-      servo_ms = SERVO_MIN;
-    } else if (servo_ms > SERVO_MAX) {
-      servo_ms = SERVO_MAX;
-    }
-  } else {
-    servo_ms = SERVO_CENTER + userSteering;
-  }
-#endif  
 }
 
 String inString = "";
