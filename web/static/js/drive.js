@@ -1,14 +1,11 @@
 function initDrive() {
   $('.btn-steering').on('mousedown', function() {
-    putJSON('/steering', { steering: $(this).data('steering') })
+    putJSON('/steering', { steering: parseFloat($(this).data('steering')) })
   });
 
-  // $('.btn-steering').on('mouseup', function() {
-  //   putJSON('/steering', { steering: 0 })
-  // });
 
   $('.btn-speed').on('mousedown', function() {
-    putJSON('/speed', { speed: $(this).data('speed') })
+    putJSON('/speed', { speed: parseFloat($(this).data('speed')) })
   });
 
   $('a.sound').on('mousedown', function() {
