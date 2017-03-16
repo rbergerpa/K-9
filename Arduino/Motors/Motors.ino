@@ -20,10 +20,8 @@ void MotorsCb( const std_msgs::Float32MultiArray& msg) {
  sprintf(str, "speed %d steering %d", ((int) (speed*100.0)), ((int) (steering*100.0)));
   nh.loginfo(str);
 
-  nh.loginfo("calling setMotorSpeed");
   setMotorSpeed(Left, speed + steering);
   setMotorSpeed(Right, speed - steering);
-  nh.loginfo("after setMotorSpeed");
 }
 
 ros::Subscriber<std_msgs::Float32MultiArray> motorsSub("/motors", &MotorsCb );
