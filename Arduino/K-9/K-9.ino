@@ -26,6 +26,11 @@ Sonar leftSonar(LEFT_SONAR_PIN);
 Sonar centerSonar(CENTER_SONAR_PIN);
 Sonar rightSonar(RIGHT_SONAR_PIN);
 
+const int MIN_SIDE_DISTANCE = 16;  // inches
+const int MIN_CENTER_DISTANCE = 10;
+const float MAX_STEERING = 0.8; // During obstacle avoidance
+const float STEERING_GAIN = 0.05;
+
 ros::NodeHandle  nh;
 
 float userSpeed;
@@ -53,32 +58,67 @@ void avoidObstacles() {
   int center = centerSonar.inches();
   int right = rightSonar.inches();
   sprintf(str, "left %d center %d right %d", left, center, right);
-  nh.logdebug(str);
-  
-  sprintf(str, "speed %d steering %d", ((int) (speed*100.0)), ((int) (steering*100.0)));
-  nh.logdebug(str);
+  nh.loginfo(str);
+
+  if (center < MIN_CENTER_DISTANCE) {
+    turnAround(left, center, right);
+    return;
+  }
+
+  if (left < MIN_SIDE_DISTANCE || right < MIN_SIDE_DISTANCE) {
+    steering = STEERING_GAIN * (right - left);
+    if (steering < -MAX_STEERING) {
+      steering = -MAX_STEERING;
+    } else if (steering > MAX_STEERING) {
+      steering = MAX_STEERING;
+    }
+ }
 
   outputSpeedAndSteering(speed, steering);
-}
+} // avoidObstacles
+
+void turnAround(float left, float center, float right) {
+  nh.loginfo("turnAround");
+  float steering = 0.0;
+
+  outputSpeedAndSteering(0.0, 0.0);
+  delay(250);
+  
+  if (right > left) {
+    steering =  MAX_STEERING;
+  } else {
+    steering = - MAX_STEERING;
+  }
+
+  outputSpeedAndSteering(0.0, steering);
+  delay(1000);
+
+  outputSpeedAndSteering(userSpeed, 0.0);
+} // turnAround
 
 void outputSpeedAndSteering(float speed, float steering) {
+  char str[50];
+  
+  printf(str, "outputSpeedAndSteering speed %d steering %d", ((int) (speed*100.0)), ((int) (steering*100.0)));
+  nh.loginfo(str);
+ 
   setMotorSpeed(Left, speed + steering);
   setMotorSpeed(Right, speed - steering);
-}
+} // outputSpeedAndSteering
 
 void setup() {
   Serial.begin(57600);
   initMotors();
+  startSonar(START_SONAR_PIN);
       
   nh.initNode();
   nh.loginfo("Starting");
   nh.subscribe(motorsSub);
-}
+} // setup
 
 void loop() {
   avoidObstacles();
 
   nh.spinOnce();
   delay(100);
-
-}
+} // loop
