@@ -17,7 +17,7 @@
   
 enum {Left, Right};
 
-const int START_SONAR_PIN = 4;
+const int START_SONAR_PIN = 9;
 const int LEFT_SONAR_PIN = 10;
 const int CENTER_SONAR_PIN = 11;
 const int RIGHT_SONAR_PIN = 12;

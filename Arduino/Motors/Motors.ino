@@ -27,9 +27,8 @@ void MotorsCb( const std_msgs::Float32MultiArray& msg) {
 ros::Subscriber<std_msgs::Float32MultiArray> motorsSub("/motors", &MotorsCb );
 
 void setup() {
-  Serial.begin(57600);
   initMotors();
-      
+  
   nh.initNode();
   nh.loginfo("Starting");
   nh.subscribe(motorsSub);
